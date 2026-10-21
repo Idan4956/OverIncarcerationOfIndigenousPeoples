@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f2e9">
+  <meta name="description" content="An independent educational project about the overincarceration of Indigenous peoples in Canada.">
+  <title>Beyond the Numbers | Indigenous Justice in Canada</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap');
+
+    :root {
+      color-scheme: light;
+      --paper: #f5f2e9;
+      --ink: #202c27;
+      --muted: #59645c;
+      --forest: #244b3a;
+      --moss: #dce3d1;
+      --clay: #a94832;
+      --line: #c9cfc2;
+      --serif: 'Newsreader', Georgia, serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+    a { color: inherit; }
+    button { font: inherit; }
+    .shell { width: min(1160px, calc(100% - 56px)); margin: 0 auto; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; min-height: 76px; border-bottom: 1px solid var(--line); }
+    .brand { color: var(--forest); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+    .nav { display: flex; align-items: center; gap: 28px; }
+    .nav a { color: var(--muted); font-size: 13px; text-decoration: none; }
+    .nav a:hover { color: var(--clay); }
+    .edit-button, .save-button { min-height: 40px; padding: 0 15px; border: 1px solid var(--forest); background: transparent; color: var(--forest); cursor: pointer; font-size: 12px; font-weight: 700; }
+    .edit-button:hover, .save-button:hover { background: var(--forest); color: white; }
+    .edit-actions { display: none; gap: 8px; }
+    body.editing .edit-actions { display: flex; }
+    body.editing .edit-button { display: none; }
+    .save-button { background: var(--forest); color: white; }
+
+    .hero { display: grid; grid-template-columns: 1.03fr .97fr; gap: 7%; align-items: center; padding: 70px 0 78px; }
+    .eyebrow { margin: 0 0 20px; color: var(--clay); font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 620px; margin-bottom: 22px; font: 500 clamp(48px, 6.2vw, 78px)/.99 var(--serif); letter-spacing: 0; }
+    .hero-copy { max-width: 510px; margin-bottom: 28px; color: var(--muted); font-size: 16px; line-height: 1.75; }
+    .text-link { display: inline-flex; align-items: center; gap: 11px; color: var(--forest); font-size: 13px; font-weight: 700; text-decoration: none; }
+    .text-link::after { content: '\2192'; font-size: 19px; transition: transform .2s ease; }
+    .text-link:hover::after { transform: translateX(4px); }
+
+    .hero-art { position: relative; min-height: 410px; overflow: hidden; background: #d7dfd0; }
+    .hero-art::before { position: absolute; inset: 0; background: linear-gradient(145deg, transparent 47%, rgb(32 44 39 / 12%)), repeating-linear-gradient(155deg, transparent 0 38px, rgb(36 75 58 / 13%) 39px 40px); content: ''; }
+    .hero-art::after { position: absolute; right: -10%; bottom: -39%; width: 78%; aspect-ratio: 1; border: 1px solid rgb(36 75 58 / 38%); border-radius: 50%; box-shadow: 0 0 0 25px rgb(36 75 58 / 7%), 0 0 0 52px rgb(36 75 58 / 6%), 0 0 0 80px rgb(36 75 58 / 5%); content: ''; }
+    .art-label { position: absolute; z-index: 1; left: 24px; bottom: 22px; color: var(--forest); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .hero-art img { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .hero-image-action { position: absolute; z-index: 2; top: 14px; right: 14px; display: none; min-height: 38px; padding: 0 12px; border: 1px solid var(--forest); background: var(--paper); color: var(--forest); cursor: pointer; font-size: 11px; font-weight: 700; }
+    body.editing .hero-image-action { display: block; }
+
+    .section { padding: 67px 0; border-top: 1px solid var(--line); }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 34px; }
+    h2 { max-width: 620px; margin-bottom: 0; font: 500 42px/1.04 var(--serif); letter-spacing: 0; }
+    .section-note { max-width: 280px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .story-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
+    .story { min-height: 205px; padding: 22px 25px 14px 0; }
+    .story + .story { padding-left: 25px; border-left: 1px solid var(--line); }
+    .story-number { display: block; margin-bottom: 28px; color: var(--clay); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+    h3 { margin-bottom: 10px; font: 500 23px/1.1 var(--serif); letter-spacing: 0; }
+    .story p { max-width: 310px; margin-bottom: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+    .voices { display: grid; grid-template-columns: .9fr 1.1fr; gap: 9%; align-items: start; padding: 62px 7%; background: var(--moss); }
+    .voices h2 { font-size: 38px; }
+    .voices-copy { color: var(--muted); font-size: 15px; line-height: 1.8; }
+    .voices-copy p:last-child { margin-bottom: 0; }
+
+    .gallery-head { margin-bottom: 24px; }
+    .gallery-head h2 { margin-bottom: 12px; }
+    .gallery-head p { max-width: 600px; margin-bottom: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .image-slot { position: relative; display: flex; min-height: 240px; align-items: center; justify-content: center; overflow: hidden; background: #e6e7dc; }
+    .image-slot:nth-child(3n + 2) { background: #e8e0d5; }
+    .image-slot:nth-child(3n) { background: #dfe4dd; }
+    .image-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .image-caption { position: absolute; right: 0; bottom: 0; left: 0; z-index: 1; padding: 30px 14px 12px; background: linear-gradient(transparent, rgb(23 35 29 / 78%)); color: white; font-size: 12px; }
+    .empty-slot { padding: 20px; color: #69736b; font-size: 12px; text-align: center; }
+    .remove-image { position: absolute; z-index: 2; top: 8px; right: 8px; display: none; width: 32px; height: 32px; border: 0; background: var(--paper); color: var(--ink); cursor: pointer; }
+    body.editing .remove-image { display: block; }
+    .add-image { display: none; min-height: 44px; margin-top: 14px; padding: 0 14px; border: 1px solid var(--forest); background: transparent; color: var(--forest); cursor: pointer; font-size: 12px; font-weight: 700; }
+    body.editing .add-image { display: inline-flex; align-items: center; }
+    .add-image:hover { background: var(--forest); color: white; }
+    .image-input { display: none; }
+
+    .sources { display: grid; grid-template-columns: .65fr 1.35fr; gap: 9%; padding-bottom: 76px; }
+    .sources h2 { font-size: 36px; }
+    .sources-copy { color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .sources-copy p { margin-bottom: 12px; }
+    .source-placeholder { padding: 15px 0; border-top: 1px solid var(--line); color: var(--forest); font-size: 12px; }
+    .footer { display: flex; justify-content: space-between; gap: 20px; padding: 22px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .footer p { margin: 0; }
+    .edit-hint { display: none; margin: 0; padding: 12px 18px; background: var(--forest); color: white; font-size: 12px; text-align: center; }
+    body.editing .edit-hint { display: block; }
+    [contenteditable="true"] { outline: 1px dashed var(--clay); outline-offset: 4px; }
+    [contenteditable="true"]:focus { outline: 2px solid var(--clay); }
+    .toast { position: fixed; z-index: 5; right: 20px; bottom: 20px; padding: 12px 16px; background: var(--forest); color: white; font-size: 12px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .2s, transform .2s; }
+    .toast.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 36px, 560px); }
+      .topbar { min-height: 66px; }
+      .nav { gap: 12px; }
+      .nav a { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 34px; padding: 55px 0 56px; }
+      h1 { font-size: 58px; }
+      .hero-art { min-height: 300px; }
+      .section { padding: 48px 0; }
+      .section-heading { display: block; }
+      h2 { font-size: 35px; }
+      .section-note { margin-top: 14px; }
+      .story-grid { grid-template-columns: 1fr; }
+      .story { min-height: auto; padding: 18px 0 22px; }
+      .story + .story { padding-left: 0; border-top: 1px solid var(--line); border-left: 0; }
+      .story-number { margin-bottom: 16px; }
+      .voices { grid-template-columns: 1fr; gap: 20px; padding: 30px 24px; }
+      .voices h2 { font-size: 34px; }
+      .gallery { grid-template-columns: 1fr 1fr; gap: 9px; }
+      .image-slot { min-height: 180px; }
+      .image-slot:last-child:nth-child(odd) { grid-column: span 2; }
+      .sources { grid-template-columns: 1fr; gap: 20px; padding-bottom: 50px; }
+      .sources h2 { font-size: 32px; }
+      .footer { display: block; }
+      .footer p + p { margin-top: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <p class="edit-hint">Editing is on. Select text to replace it, add images, then download the page to publish your updates.</p>
+  <header class="shell topbar">
+    <a class="brand" href="#top">Beyond the Numbers</a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#context">The context</a>
+      <a href="#voices">Perspectives</a>
+      <a href="#sources">Sources</a>
+      <button class="edit-button" id="edit-toggle" type="button" aria-pressed="false">Edit page</button>
+      <div class="edit-actions">
+        <button class="save-button" id="save-page" type="button">Save changes</button>
+        <button class="edit-button" id="export-page" type="button">Download page</button>
+        <button class="edit-button" id="cancel-edit" type="button">Done</button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow" data-editable>Understanding justice in Canada</p>
+        <h1 id="page-title" data-editable>Indigenous justice, beyond the numbers.</h1>
+        <p class="hero-copy" data-editable>Indigenous peoples continue to be overrepresented in Canada's criminal justice system. This project looks at the history, systems, and human stories behind that reality, and at the work toward change.</p>
+        <a class="text-link" href="#context">Explore the context</a>
+      </div>
+      <div class="hero-art" id="hero-art" role="group" aria-label="Lead image">
+        <span class="art-label">A place for your lead image</span>
+        <img id="hero-image" alt="">
+        <button class="hero-image-action" id="choose-hero-image" type="button">Set lead image</button>
+      </div>
+    </section>
+
+    <section class="section" id="context" aria-labelledby="context-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-editable>Start with the context</p>
+          <h2 id="context-title" data-editable>One statistic cannot tell the whole story.</h2>
+        </div>
+        <p class="section-note" data-editable>Use this space to introduce the issue with a short, sourced overview. Include the year and population definition alongside any figures.</p>
+      </div>
+      <div class="story-grid">
+        <article class="story">
+          <span class="story-number">01 / HISTORY</span>
+          <h3 data-editable>Where we have been</h3>
+          <p data-editable>Describe the policies and historical conditions that shaped today's justice systems. Add a source for this section below.</p>
+        </article>
+        <article class="story">
+          <span class="story-number">02 / SYSTEMS</span>
+          <h3 data-editable>How the system works</h3>
+          <p data-editable>Explain the factors and institutions that contribute to unequal outcomes, using clear language and current evidence.</p>
+        </article>
+        <article class="story">
+          <span class="story-number">03 / CHANGE</span>
+          <h3 data-editable>What change can look like</h3>
+          <p data-editable>Share community-led approaches, policy work, and practical ways readers can learn more and take part.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="voices" aria-labelledby="voices-title">
+      <div class="voices">
+        <div>
+          <p class="eyebrow" data-editable>People and perspectives</p>
+          <h2 id="voices-title" data-editable>Make room for lived experience.</h2>
+        </div>
+        <div class="voices-copy">
+          <p data-editable>Add an interview, reflection, or community perspective here. Identify contributors the way they wish to be identified, and get permission before sharing someone's words or image.</p>
+          <p data-editable>Indigenous peoples and communities are diverse. Be specific about whose experiences and perspectives are represented, and avoid presenting one story as universal.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="gallery" aria-labelledby="gallery-title">
+      <div class="gallery-head">
+        <p class="eyebrow" data-editable>Visual stories</p>
+        <h2 id="gallery-title" data-editable>Images with care and context.</h2>
+        <p data-editable>Add photographs, artwork, or other visual material. Include captions and credits, and confirm you have permission to publish each image.</p>
+      </div>
+      <div class="gallery" id="gallery-grid" aria-live="polite"></div>
+      <button class="add-image" id="add-image" type="button">+ Add an image</button>
+      <input class="image-input" id="image-input" type="file" accept="image/*" multiple>
+    </section>
+
+    <section class="section sources" id="sources" aria-labelledby="sources-title">
+      <div>
+        <p class="eyebrow" data-editable>Read further</p>
+        <h2 id="sources-title" data-editable>Sources & further reading</h2>
+      </div>
+      <div class="sources-copy" id="source-list">
+        <p data-editable>Add the sources behind your claims here. Include the title, organization or author, publication date, and a working link.</p>
+        <div class="source-placeholder" data-editable>Source title · Organization · Year · URL</div>
+        <div class="source-placeholder" data-editable>Source title · Organization · Year · URL</div>
+        <div class="source-placeholder" data-editable>Source title · Organization · Year · URL</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell footer">
+    <p data-editable>An educational project about overincarceration of Indigenous peoples in Canada.</p>
+    <p>Use current, carefully sourced information. Respect community knowledge and consent.</p>
+  </footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="application/json" id="site-data">{}</script>
+
+  <script>
+    (() => {
+      const storageKey = 'beyond-the-numbers-site-v1';
+      const editableElements = [...document.querySelectorAll('[data-editable]')];
+      const gallery = document.getElementById('gallery-grid');
+      const heroImage = document.getElementById('hero-image');
+      const heroLabel = document.querySelector('.art-label');
+      const imageInput = document.getElementById('image-input');
+      const toast = document.getElementById('toast');
+      let editing = false;
+      let toastTimer;
+
+      function readSaved() {
+        try {
+          const embedded = JSON.parse(document.getElementById('site-data').textContent || '{}');
+          return JSON.parse(localStorage.getItem(storageKey) || JSON.stringify(embedded));
+        }
+        catch { return {}; }
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('visible'), 2400);
+      }
+
+      function renderGallery(images = []) {
+        gallery.replaceChildren();
+        const entries = images.length ? images : [null, null, null];
+        entries.forEach((image, index) => {
+          const slot = document.createElement('div');
+          slot.className = 'image-slot';
+          if (image) {
+            const img = document.createElement('img');
+            img.src = image.src;
+            img.alt = image.alt || '';
+            slot.append(img);
+            const caption = document.createElement('div');
+            caption.className = 'image-caption';
+            caption.textContent = image.caption || 'Add a caption in edit mode';
+            slot.append(caption);
+          } else {
+            const empty = document.createElement('span');
+            empty.className = 'empty-slot';
+            empty.textContent = 'Your image will appear here';
+            slot.append(empty);
+          }
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'remove-image';
+          remove.setAttribute('aria-label', `Remove image ${index + 1}`);
+          remove.textContent = '\u00d7';
+          remove.addEventListener('click', () => {
+            const current = readSaved();
+            current.images = (current.images || []).filter((_, imageIndex) => imageIndex !== index);
+            persist(current);
+            renderGallery(current.images);
+          });
+          slot.append(remove);
+          gallery.append(slot);
+        });
+      }
+
+      function persist(data = readSaved()) {
+        data.text = editableElements.map(element => element.innerHTML);
+        data.hero = heroImage.dataset.src || '';
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(data));
+          showToast('Changes saved in this browser.');
+        } catch {
+          showToast('Storage is full. Try removing a large image.');
+        }
+      }
+
+      function restore() {
+        const saved = readSaved();
+        if (Array.isArray(saved.text)) {
+          editableElements.forEach((element, index) => {
+            if (typeof saved.text[index] === 'string') element.innerHTML = saved.text[index];
+          });
+        }
+        if (saved.hero) {
+          heroImage.src = saved.hero;
+          heroImage.dataset.src = saved.hero;
+          heroLabel.hidden = true;
+        }
+        renderGallery(saved.images || []);
+      }
+
+      function setEditing(value) {
+        editing = value;
+        document.body.classList.toggle('editing', editing);
+        editableElements.forEach(element => {
+          element.contentEditable = String(editing);
+          element.setAttribute('aria-label', editing ? 'Editable page text' : '');
+        });
+        document.getElementById('edit-toggle').setAttribute('aria-pressed', String(editing));
+      }
+
+      document.getElementById('edit-toggle').addEventListener('click', () => setEditing(true));
+      document.getElementById('save-page').addEventListener('click', () => persist());
+      document.getElementById('cancel-edit').addEventListener('click', () => {
+        persist();
+        setEditing(false);
+      });
+      document.getElementById('add-image').addEventListener('click', () => imageInput.click());
+
+      document.getElementById('choose-hero-image').addEventListener('click', () => {
+        imageInput.dataset.hero = 'true';
+        imageInput.click();
+      });
+      imageInput.addEventListener('change', async () => {
+        const files = [...imageInput.files];
+        if (!files.length) return;
+        const saved = readSaved();
+        saved.images ||= [];
+        for (const file of files) {
+          const src = await new Promise(resolve => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
+          if (imageInput.dataset.hero === 'true') {
+            heroImage.src = src;
+            heroImage.dataset.src = src;
+            heroLabel.hidden = true;
+            imageInput.dataset.hero = '';
+          } else {
+            const caption = window.prompt('Add an image caption or credit:') || '';
+            saved.images.push({ src, caption, alt: caption });
+          }
+        }
+        imageInput.value = '';
+        persist(saved);
+        renderGallery(saved.images);
+      });
+
+      document.addEventListener('keydown', event => {
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+          event.preventDefault();
+          persist();
+        }
+      });
+
+      document.getElementById('export-page').addEventListener('click', () => {
+        persist();
+        const exportedPage = document.documentElement.cloneNode(true);
+        const exportedBody = exportedPage.querySelector('body');
+        exportedPage.querySelector('#site-data').textContent = JSON.stringify(readSaved()).replace(/</g, '\\u003c');
+        exportedBody.classList.remove('editing');
+        exportedPage.querySelector('.edit-hint').remove();
+        exportedPage.querySelector('.toast').remove();
+        exportedPage.querySelectorAll('[data-editable]').forEach(element => {
+          element.removeAttribute('contenteditable');
+          element.removeAttribute('aria-label');
+        });
+        const pageFile = new Blob(['<!doctype html>\n', exportedPage.outerHTML], { type: 'text/html' });
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(pageFile);
+        downloadLink.download = 'index.html';
+        downloadLink.click();
+        setTimeout(() => URL.revokeObjectURL(downloadLink.href), 1000);
+        showToast('Updated page downloaded.');
+      });
+
+      imageInput.addEventListener('cancel', () => { imageInput.dataset.hero = ''; });
+
+      restore();
+    })();
+  </script>
+</body>
+</html>
